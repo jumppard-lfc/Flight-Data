@@ -66,6 +66,19 @@ class FlightInfoScraper:
 
     def fill_form(self, source_country, source_airport, dest_country, dest_airport):
         try:
+
+            #time.sleep(4000)
+
+            try:
+                # Check Cookies
+                is_cookie = WebDriverWait(self.driver, 2).until(
+                        EC.element_to_be_clickable((By.XPATH, "/html/body/c-wiz/div/div/div/div[2]/div[1]/div[3]/div[1]/div[1]/form[2]/div/div/button/span"))
+                )
+                is_cookie.click()
+                print("Cookie found & accepted, continuing...")  
+            except:
+                print("Cookie not found, continuing...")    
+
             # Wait for the form to load
             form = WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.XPATH, "/html/body/c-wiz[2]/div/div[2]/c-wiz/div[1]/c-wiz/div[2]/div[1]/div[1]/div[1]"))
@@ -77,7 +90,8 @@ class FlightInfoScraper:
                     EC.element_to_be_clickable((By.XPATH, "//input[@aria-label='Where from?']"))
                 )
                 from_input.clear()
-                from_input.send_keys(source_airport)
+                #from_input.send_keys(source_airport[:-1])
+                from_input.send_keys("Chhatrapati Shivaji Maharaj")
                 time.sleep(1)
                 from_input.send_keys(Keys.ARROW_DOWN)
                 time.sleep(0.5)
@@ -119,17 +133,21 @@ class FlightInfoScraper:
                     EC.element_to_be_clickable((By.XPATH, "/html/body/c-wiz[4]/div/div[2]/c-wiz/div[1]/c-wiz/div[2]/div[1]/div/div[2]/div[2]/div/div/div[1]/div/div/div[1]/div/div[1]/div/input"))
                 )
                 click_from_date.click()
-                time.sleep(5)
+                time.sleep(10)
 
                 click_to_date = WebDriverWait(self.driver, 10).until(
                     EC.element_to_be_clickable((By.XPATH, "/html/body/c-wiz[4]/div/div[2]/c-wiz/div[1]/c-wiz/div[2]/div[1]/div/div[2]/div[2]/div/div/div[2]/div/div[2]/div[1]/div[1]/div[2]/div/input"))
                 )
                 click_to_date.click()
 
+                time.sleep(5)
+
                 click_from_date_again = WebDriverWait(self.driver, 10).until(
                     EC.element_to_be_clickable((By.XPATH, "/html/body/c-wiz[4]/div/div[2]/c-wiz/div[1]/c-wiz/div[2]/div[1]/div/div[2]/div[2]/div/div/div[2]/div/div[2]/div[1]/div[1]/div[1]/div/input"))
                 )
                 click_from_date_again.click()
+
+                time.sleep(40000)
 
                 # Collect price data
                 calendar_cells = self.driver.find_elements(By.CSS_SELECTOR, "div[role='gridcell']")
@@ -209,8 +227,8 @@ def main():
     now_timestamp = datetime.now(ist_timezone)
     today_date = now_timestamp.date()
 
-    supabase_url = ""
-    supabase_key = ""
+    supabase_url = "https://vmionvjghqlgkfctmacz.supabase.co"
+    supabase_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZtaW9udmpnaHFsZ2tmY3RtYWN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIyNTM3MTQsImV4cCI6MjA0NzgyOTcxNH0.8NhgW20_HGG62CbASdHFsj8CCpCGZZ_6AyH01rLGPok"
     supabase = create_client(supabase_url, supabase_key)
     supabase_table = "google_flights_scrap"
 
